@@ -1,0 +1,29 @@
+{
+  "_notes": {
+    "marginConvention": "ugaAub = UGA points minus Auburn points. ugaOle = UGA points minus Ole Miss points. ironBowl = Alabama points minus Auburn points. Signed, so picking the wrong winner produces a large error automatically.",
+    "rule": "Tiebreaker = sum of |predicted margin - actual margin| across the three games. Lowest total wins. SEC champion breaks any remaining tie."
+  },
+  "entries": [
+    { "name": "Camille",         "team": "Georgia",  "wins": 10, "ugaAub":  7, "ugaOle":  1, "ironBowl": 13, "sec": "Georgia",  "submitted": "2026-08-28" },
+    { "name": "Broughton Branch","team": "Georgia",  "wins": 11, "ugaAub": 14, "ugaOle": -4, "ironBowl":  7, "sec": "Georgia",  "submitted": "2026-09-03" },
+    { "name": "Grace Fluker",    "team": "Georgia",  "wins": 11, "ugaAub": 35, "ugaOle": 24, "ironBowl": 24, "sec": "Georgia",  "submitted": "2026-09-03" },
+    { "name": "Sam Addison",     "team": "Georgia",  "wins": 10, "ugaAub": 17, "ugaOle":  9, "ironBowl":  8, "sec": "Georgia",  "submitted": "2026-09-04" },
+    { "name": "Big Slate",       "team": "Ole Miss", "wins":  8, "ugaAub": 21, "ugaOle":  4, "ironBowl": 10, "sec": "Georgia",  "submitted": "2026-09-04" },
+    { "name": "Mat Fluker",      "team": "Georgia",  "wins": 10, "ugaAub": 15, "ugaOle":  2, "ironBowl": 11, "sec": "LSU",      "submitted": "2026-09-04" },
+    { "name": "Andie",           "team": "Ole Miss", "wins":  9, "ugaAub": 23, "ugaOle":  7, "ironBowl": 24, "sec": "Georgia",  "submitted": "2026-09-04" },
+    { "name": "Marianna Branch", "team": "Georgia",  "wins": 10, "ugaAub": 20, "ugaOle": -7, "ironBowl": 10, "sec": "Georgia",  "submitted": "2026-09-05" },
+    { "name": "Mara Fluker",     "team": "Georgia",  "wins": 10, "ugaAub": 10, "ugaOle":  3, "ironBowl": 17, "sec": "Georgia",  "submitted": "2026-09-05" },
+    { "name": "Slate Jr",        "team": "Auburn",   "wins":  6, "ugaAub": 18, "ugaOle": 10, "ironBowl":  7, "sec": "Alabama",  "submitted": "2026-09-05" },
+    { "name": "Swift",           "team": "Auburn",   "wins":  7, "ugaAub": 18, "ugaOle":  4, "ironBowl":  7, "sec": "Georgia",  "submitted": "2026-09-05" },
+    { "name": "Cam",             "team": "Georgia",  "wins": 11, "ugaAub": 17, "ugaOle": -4, "ironBowl":  9, "sec": "Texas",    "submitted": "2026-09-05" },
+    { "name": "Mae Mae",         "team": "Georgia",  "wins": 10, "ugaAub": 28, "ugaOle":  7, "ironBowl": 18, "sec": "Georgia",  "submitted": "2026-09-05" },
+    { "name": "Lindsay",         "team": "Georgia",  "wins": 11, "ugaAub": 21, "ugaOle":  3, "ironBowl":  3, "sec": "Georgia",  "submitted": "2026-09-07" },
+    { "name": "Jason Branch",    "team": "Auburn",   "wins":  6, "ugaAub": 11, "ugaOle":  4, "ironBowl":  4, "sec": "Georgia",  "submitted": "2026-09-09" }
+  ],
+  "pending": [
+    { "name": "Lucy",  "note": "entry not yet submitted" },
+    { "name": "Jim",   "note": "entry not yet submitted" },
+    { "name": "Luke",  "note": "entry not yet submitted" },
+    { "name": "Cile",  "note": "entry not yet submitted" }
+  ]
+}

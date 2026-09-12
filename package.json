@@ -1,0 +1,6 @@
+{
+  "name": "pops-pool",
+  "private": true,
+  "type": "module",
+  "scripts": { "refresh": "node scripts/refresh.mjs" }
+}

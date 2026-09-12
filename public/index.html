@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pop's Pool</title>
+<meta name="description" content="Live standings for Pop's Pool — the family college football prediction pool. Est. 2020.">
+<meta property="og:title" content="Pop's Pool">
+<meta property="og:description" content="Live standings for the family pool. Est. 2020.">
+<meta property="og:image" content="/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#23201c; --ink2:#5f594f; --ink3:#8b8378;
+  --paper:#faf7f0; --card:#fffdf8; --line:#e3dcce; --line2:#cdc3b0;
+  --accent:#7a1420; --accentbg:#f3e6e3;
+  --serif:'Sorts Mill Goudy',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 64px}
+header{text-align:center;padding:34px 0 22px}
+.pop{width:74px;height:74px;border-radius:50%;object-fit:cover;object-position:50% 22%;border:2px solid var(--line2);margin-bottom:12px}
+h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;line-height:1.05}
+.est{font-family:var(--serif);font-style:italic;color:var(--ink3);font-size:15px;margin-top:4px}
+.rule{height:1px;background:var(--line);margin:20px 0}
+.teams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center}
+.tcard img{width:30px;height:30px;object-fit:contain}
+.tname{font-size:11px;color:var(--ink3);margin-top:5px}
+.trec{font-family:var(--serif);font-size:19px;margin-top:1px}
+.tproj{font-size:11px;color:var(--ink3)}
+.thead{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--ink3);padding:0 10px 7px;text-transform:uppercase;letter-spacing:.05em}
+.w-rank{width:20px}.w-pick{width:36px;text-align:right}.w-riv{width:44px;text-align:right}.w-win{width:50px;text-align:right}
+.row{display:flex;align-items:center;gap:9px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 10px;margin-bottom:5px;cursor:pointer;font:inherit;color:inherit;text-align:left}
+.row:hover{border-color:var(--line2)}
+.row.open{border-color:var(--accent);border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.rk{font-family:var(--serif);font-size:17px;color:var(--ink3)}
+.logo{width:22px;height:22px;object-fit:contain;flex:none}
+.nm{flex:1;min-width:0;font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk{font-size:13px;color:var(--ink2)}
+.rv{font-size:13px;color:var(--ink2)}
+.wp{font-family:var(--serif);font-size:19px}
+.panel{background:var(--card);border:1px solid var(--accent);border-top:none;border-radius:0 0 10px 10px;padding:4px 13px 16px;margin-bottom:5px}
+.lead{font-size:15px;line-height:1.55;padding:13px 2px 15px;border-bottom:1px solid var(--line)}
+.chain{display:flex;align-items:center;gap:5px;text-align:center;padding:15px 0;border-bottom:1px solid var(--line)}
+.chain>div{flex:1}
+.cn{font-family:var(--serif);font-size:22px}
+.cl{font-size:11px;color:var(--ink3);line-height:1.3;margin-top:2px}
+.arw{color:var(--line2);font-size:15px}
+.note{font-size:12.5px;color:var(--ink2);padding:13px 2px 4px;line-height:1.5}
+.g{padding:13px 0 4px;border-top:1px solid var(--line)}
+.gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.gt{font-size:13.5px;font-weight:500}
+.gy{font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.bar{position:relative;height:24px;margin:11px 0 3px}
+.rail{position:absolute;top:11px;left:0;right:0;height:2px;background:var(--line)}
+.tick{position:absolute;top:7px;width:1px;height:10px;background:var(--line2)}
+.zero{position:absolute;top:4px;width:1px;height:16px;background:var(--ink3);opacity:.45}
+.band{position:absolute;top:9px;height:6px;background:var(--accent);opacity:.3;border-radius:3px}
+.dot{position:absolute;top:5px;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-left:-4.5px}
+.act{position:absolute;top:2px;width:2px;height:20px;background:#1a6b3c}
+.ax{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink3)}
+.gr{font-size:13px;margin-top:8px;line-height:1.5}
+.gr b{font-weight:500}
+.done{background:var(--accentbg);border-radius:6px;padding:7px 9px;font-size:12.5px;margin-top:8px;color:var(--ink)}
+.key{font-size:11.5px;color:var(--ink3);padding:12px 2px 0;line-height:1.5;border-top:1px solid var(--line);margin-top:12px}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-top:26px}
+summary{font-family:var(--serif);font-size:19px;cursor:pointer}
+details p{margin-top:11px;font-size:14px;line-height:1.65}
+.clar{background:var(--accentbg);border-radius:6px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.55}
+footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-height:1.7}
+.pend{font-size:12.5px;color:var(--ink3);text-align:center;margin-top:12px;font-style:italic;font-family:var(--serif)}
+@media(max-width:420px){h1{font-size:34px}.w-riv{width:38px}.nm{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img class="pop" src="/pop.jpg" alt="Pop">
+  <h1>Pop's Pool</h1>
+  <div class="est">est. 2020 &middot; 2026 season</div>
+</header>
+
+<div id="teams" class="teams"></div>
+
+<div class="thead">
+  <span class="w-rank">#</span>
+  <span style="width:22px"></span>
+  <span style="flex:1">Entry</span>
+  <span class="w-pick">Pick</span>
+  <span class="w-riv" title="Expected rivals left heading into the tiebreaker stage">Rivals</span>
+  <span class="w-win">Win %</span>
+</div>
+<div id="board"></div>
+<div id="pending" class="pend"></div>
+
+<details>
+  <summary>The rules</summary>
+  <p>Everyone predicts the regular-season record of their own alma mater &mdash; Georgia, Auburn, or Ole Miss. Closest to the real record wins. One entry per person.</p>
+  <p>When people tie on the record, three score predictions break it: Georgia&ndash;Auburn, Georgia&ndash;Ole Miss, and the Iron Bowl. If a tie somehow survives all three, the SEC champion pick settles it.</p>
+  <div class="clar"><b>Commissioner's clarification:</b> tiebreakers are scored on the point spread differential. If Georgia beats Auburn by 14 and you predicted 13, you are off by one &mdash; not off by the total points. Your three margin errors are added together, and the smallest total wins.</div>
+</details>
+
+<footer>
+  <div id="stamp"></div>
+  <div>Projections from 60,000 simulations. Odds and ratings via CollegeFootballData.</div>
+</footer>
+
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const GK = ['a','o','i'];
+const RANGE = { a:[-15,45], o:[-25,35], i:[-20,35] };
+
+function one(g, v){ return v > 0 ? g.ref + ' by ' + v : v < 0 ? g.opp + ' by ' + Math.abs(v) : 'a tie'; }
+
+function band(g, w){
+  const lo = w.lo, hi = w.hi;
+  if (lo === null) return one(g, Math.floor(hi)) + ' or less';
+  if (hi === null) return one(g, Math.ceil(lo)) + ' or more';
+  const a = Math.ceil(lo), b = Math.floor(hi), n = [];
+  for (let v = a; v <= b; v++) n.push(v);
+  if (!n.length) return one(g, Math.round((lo + hi) / 2));
+  if (n.length === 1) return one(g, n[0]);
+  if (n.every(v => v > 0)) return g.ref + ' by ' + n[0] + (n.length === 2 ? ' or ' : ' to ') + n[n.length-1];
+  if (n.every(v => v < 0)) return g.opp + ' by ' + Math.abs(n[n.length-1]) + (n.length === 2 ? ' or ' : ' to ') + Math.abs(n[0]);
+  return 'a tie either way';
+}
+
+function lead(e, D){
+  const rec = e.pick + '-' + (12 - e.pick);
+  let best = null, bp = -1;
+  GK.forEach(k => { const w = e['win_' + k]; if (!D.games[k].played && w.p > bp) { bp = w.p; best = k; } });
+  const base = 'Get ' + e.team + ' to ' + rec;
+  if (best && bp >= 10) return base + ', then hope for ' + band(D.games[best], e['win_' + best]) + '.';
+  return base + ', then have the scores land close to your numbers.';
+}
+
+function panel(e, D){
+  let h = '<div class="panel">';
+  h += '<p class="lead">' + lead(e, D) + '</p>';
+  h += '<div class="chain">'
+     + '<div><div class="cn">' + e.alivePct + '%</div><div class="cl">still alive after<br>the record round</div></div>'
+     + '<div class="arw">&rarr;</div>'
+     + '<div><div class="cn">' + e.rivals + '</div><div class="cl">expected rivals left<br>heading into tiebreakers</div></div>'
+     + '<div class="arw">&rarr;</div>'
+     + '<div><div class="cn">' + e.winIfAlive + '%</div><div class="cl">you beat them<br>on the scores</div></div>'
+     + '</div>';
+  h += '<p class="note">' + e.alivePct + '% of ' + e.winIfAlive + '% is <b>' + e.winPct
+     + '%</b>. You cannot win without surviving the record round, so those two steps are the whole picture.</p>';
+  h += '<p class="note" style="padding-top:2px">The three games are added together &mdash; closest total wins. Being near on all three beats nailing one.</p>';
+
+  GK.forEach(k => {
+    const g = D.games[k], w = e['win_' + k], mine = e.picks[k];
+    const [lo, hi] = RANGE[k], sp = hi - lo, P = v => Math.min(100, Math.max(0, (v - lo) / sp * 100));
+    const a = w.lo === null ? lo : w.lo, b = w.hi === null ? hi : w.hi;
+    let ticks = '';
+    D.entries.forEach(x => { if (x.name !== e.name) ticks += '<div class="tick" style="left:' + P(x.picks[k]).toFixed(1) + '%"></div>'; });
+    h += '<div class="g"><div class="gh"><span class="gt">' + g.label + '</span>'
+       + '<span class="gy">you said ' + one(g, mine) + '</span></div>'
+       + '<div class="bar"><div class="rail"></div>' + ticks
+       + '<div class="zero" style="left:' + P(0).toFixed(1) + '%"></div>'
+       + (g.played ? '' : '<div class="band" style="left:' + P(a).toFixed(1) + '%;width:' + Math.max(2, P(b) - P(a)).toFixed(1) + '%"></div>')
+       + '<div class="dot" style="left:' + P(mine).toFixed(1) + '%"></div>'
+       + (g.played ? '<div class="act" style="left:' + P(g.actual).toFixed(1) + '%"></div>' : '')
+       + '</div>'
+       + '<div class="ax"><span>' + g.opp + ' +' + Math.abs(lo) + '</span><span>tie</span><span>' + g.ref + ' +' + hi + '</span></div>';
+    if (g.played) {
+      h += '<div class="done"><b>Final:</b> ' + g.score + '. You were off by ' + Math.abs(mine - g.actual) + '.</div>';
+    } else {
+      h += '<p class="gr"><b>' + band(g, w) + '</b> and you win this game outright. ' + w.p + '% of the time.</p>';
+    }
+    h += '</div>';
+  });
+  h += '<p class="key">Dot is you. Small ticks are the other entries. Faint middle tick is a tie.'
+     + (Object.values(D.games).some(g => g.played) ? ' Green line is the actual result.' : '') + '</p>';
+  return h + '</div>';
+}
+
+function render(D){
+  $('#teams').innerHTML = D.teams.map(t => {
+    const top = [...t.dist].sort((a, b) => b.p - a.p)[0];
+    return '<div class="tcard"><img src="' + t.logo + '" alt="' + t.name + '">'
+      + '<div class="tname">' + t.name + '</div>'
+      + '<div class="trec">' + t.record.w + '-' + t.record.l + '</div>'
+      + '<div class="tproj">likely ' + top.wins + '-' + (12 - top.wins) + '</div></div>';
+  }).join('');
+
+  $('#board').innerHTML = D.entries.map((e, i) =>
+    '<button class="row" data-i="' + i + '" aria-expanded="false">'
+    + '<span class="rk w-rank">' + e.rank + '</span>'
+    + '<img class="logo" src="' + e.teamLogo + '" alt="' + e.team + '">'
+    + '<span class="nm">' + e.name + '</span>'
+    + '<span class="pk w-pick">' + e.pick + '-' + (12 - e.pick) + '</span>'
+    + '<span class="rv w-riv">' + e.rivals + '</span>'
+    + '<span class="wp w-win">' + e.winPct.toFixed(1) + '</span>'
+    + '</button><div id="p' + i + '"></div>').join('');
+
+  if (D.pending && D.pending.length)
+    $('#pending').textContent = 'Still to enter: ' + D.pending.map(p => p.name).join(', ');
+
+  const d = new Date(D.generated);
+  $('#stamp').textContent = 'Updated ' + d.toLocaleString('en-US',
+    { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZone:'America/New_York' }) + ' ET';
+
+  document.querySelectorAll('.row').forEach(b => b.addEventListener('click', () => {
+    const i = b.dataset.i, box = document.getElementById('p' + i), open = box.innerHTML !== '';
+    document.querySelectorAll('.row').forEach(x => x.classList.remove('open'));
+    document.querySelectorAll('[id^=p]').forEach(x => { if (x.id !== 'p' + i) x.innerHTML = ''; });
+    box.innerHTML = open ? '' : panel(D.entries[i], D);
+    b.classList.toggle('open', !open);
+    b.setAttribute('aria-expanded', String(!open));
+    if (!open) box.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }));
+}
+
+fetch('/data/standings.json?t=' + Date.now())
+  .then(r => r.json()).then(render)
+  .catch(() => { $('#board').innerHTML = '<p style="text-align:center;color:var(--ink3);padding:20px">Standings are being updated. Check back shortly.</p>'; });
+</script>
+</body>
+</html>

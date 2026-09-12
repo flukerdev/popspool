@@ -1,7 +1,0 @@
-{
-  "cleanUrls": true,
-  "headers": [
-    { "source": "/data/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }] },
-    { "source": "/(.*).png",  "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
-  ]
-}

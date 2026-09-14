@@ -1,0 +1,50 @@
+name: Refresh standings
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Times listed for both EDT (UTC-4) and EST (UTC-5); the off-season one is a
+    # harmless no-op commit. Saturday 5pm ET, Saturday 8pm ET, Sunday 1am ET,
+    # Sunday 10am ET.
+    - cron: '0 21 * * 6'   # Sat 5pm EDT
+    - cron: '0 22 * * 6'   # Sat 5pm EST
+    - cron: '0 0 * * 0'    # Sat 8pm EDT
+    - cron: '0 1 * * 0'    # Sat 8pm EST
+    - cron: '0 5 * * 0'    # Sun 1am EDT
+    - cron: '0 6 * * 0'    # Sun 1am EST
+    - cron: '0 14 * * 0'   # Sun 10am EDT
+    - cron: '0 15 * * 0'   # Sun 10am EST
+
+concurrency:
+  group: refresh-standings
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Refresh standings
+        env:
+          CFBD_KEY: ${{ secrets.CFBD_KEY }}
+        run: node scripts/refresh.mjs
+
+      - name: Commit updated data
+        run: |
+          git config user.name  "popspool-bot"
+          git config user.email "popspool-bot@users.noreply.github.com"
+          git add public/data
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "Refresh standings ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git push
+          fi

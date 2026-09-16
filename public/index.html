@@ -29,6 +29,8 @@ header{text-align:center;padding:34px 0 22px}
 .pop{width:74px;height:74px;border-radius:50%;object-fit:cover;object-position:50% 22%;border:2px solid var(--line2);margin-bottom:12px}
 h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;line-height:1.05}
 .est{font-family:var(--serif);font-style:italic;color:var(--ink3);font-size:15px;margin-top:4px}
+.stamp{font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.55}
+.cad{color:var(--ink3);opacity:.85}
 .rule{height:1px;background:var(--line);margin:20px 0}
 .teams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
 .tcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center}
@@ -37,7 +39,7 @@ h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;
 .trec{font-family:var(--serif);font-size:19px;margin-top:1px}
 .tproj{font-size:11px;color:var(--ink3)}
 .thead{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--ink3);padding:0 10px 7px;text-transform:uppercase;letter-spacing:.05em}
-.w-rank{width:20px}.w-pick{width:36px;text-align:right}.w-riv{width:44px;text-align:right}.w-win{width:50px;text-align:right}
+.w-rank{width:20px}.w-pick{width:44px;text-align:right}.w-win{width:52px;text-align:right}
 .row{display:flex;align-items:center;gap:9px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 10px;margin-bottom:5px;cursor:pointer;font:inherit;color:inherit;text-align:left}
 .row:hover{border-color:var(--line2)}
 .row.open{border-color:var(--accent);border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
@@ -46,38 +48,34 @@ h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;
 .nm{flex:1;min-width:0;font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pk{font-size:13px;color:var(--ink2)}
 .rv{font-size:13px;color:var(--ink2)}
-.wp{font-family:var(--serif);font-size:19px}
+.wp{font-size:16px;font-weight:600}
 .panel{background:var(--card);border:1px solid var(--accent);border-top:none;border-radius:0 0 10px 10px;padding:4px 13px 16px;margin-bottom:5px}
-.lead{font-size:15px;line-height:1.55;padding:13px 2px 15px;border-bottom:1px solid var(--line)}
-.chain{display:flex;align-items:center;gap:5px;text-align:center;padding:15px 0;border-bottom:1px solid var(--line)}
-.chain>div{flex:1}
-.cn{font-family:var(--serif);font-size:22px}
-.cl{font-size:11px;color:var(--ink3);line-height:1.3;margin-top:2px}
-.arw{color:var(--line2);font-size:15px}
-.note{font-size:12.5px;color:var(--ink2);padding:13px 2px 4px;line-height:1.5}
-.g{padding:13px 0 4px;border-top:1px solid var(--line)}
-.gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.gt{font-size:13.5px;font-weight:500}
-.gy{font-size:12.5px;color:var(--ink2);white-space:nowrap}
-.bar{position:relative;height:24px;margin:11px 0 3px}
-.rail{position:absolute;top:11px;left:0;right:0;height:2px;background:var(--line)}
-.tick{position:absolute;top:7px;width:1px;height:10px;background:var(--line2)}
-.zero{position:absolute;top:4px;width:1px;height:16px;background:var(--ink3);opacity:.45}
-.band{position:absolute;top:9px;height:6px;background:var(--accent);opacity:.3;border-radius:3px}
-.dot{position:absolute;top:5px;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-left:-4.5px}
-.act{position:absolute;top:2px;width:2px;height:20px;background:#1a6b3c}
-.ax{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink3)}
-.gr{font-size:13px;margin-top:8px;line-height:1.5}
-.gr b{font-weight:500}
-.done{background:var(--accentbg);border-radius:6px;padding:7px 9px;font-size:12.5px;margin-top:8px;color:var(--ink)}
-.key{font-size:11.5px;color:var(--ink3);padding:12px 2px 0;line-height:1.5;border-top:1px solid var(--line);margin-top:12px}
+.lead{font-size:15.5px;line-height:1.55;padding:14px 2px 14px;border-bottom:1px solid var(--line)}
+.why{font-size:13.5px;line-height:1.65;color:var(--ink2);padding:13px 2px 14px;border-bottom:1px solid var(--line)}
+.why b{color:var(--ink);font-weight:600}
+.sect{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);padding:14px 2px 9px}
+.sb{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:6px}
+.sbt{display:flex;align-items:center;gap:7px;flex:1;min-width:0}
+.sbt.r{justify-content:flex-end}
+.sbt img{width:22px;height:22px;object-fit:contain;flex:none}
+.sbt span{font-size:12.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sbs{font-family:var(--serif);font-size:20px;letter-spacing:.5px;white-space:nowrap}
+.gl{font-size:11px;color:var(--ink3);text-align:center;margin:-2px 0 7px}
+.fin{background:var(--accentbg);border-radius:6px;padding:7px 10px;font-size:12.5px;margin:-2px 0 6px}
+.champ{display:flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.champ img{width:24px;height:24px;object-fit:contain}
+.champ .cn2{font-size:13.5px;flex:1}
+.champ .cx{font-size:11px;color:var(--ink3)}
+.trend{padding:4px 0 2px}
+.trend svg{width:100%;height:112px;display:block;overflow:visible}
+.tnote{font-size:11.5px;color:var(--ink3);line-height:1.5;padding:2px 2px 0}
 details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-top:26px}
 summary{font-family:var(--serif);font-size:19px;cursor:pointer}
 details p{margin-top:11px;font-size:14px;line-height:1.65}
 .clar{background:var(--accentbg);border-radius:6px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.55}
 footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-height:1.7}
 .pend{font-size:12.5px;color:var(--ink3);text-align:center;margin-top:12px;font-style:italic;font-family:var(--serif)}
-@media(max-width:420px){h1{font-size:34px}.w-riv{width:38px}.nm{font-size:13.5px}}
+@media(max-width:420px){h1{font-size:34px}.nm{font-size:13.5px}}
 </style>
 </head>
 <body>
@@ -87,6 +85,7 @@ footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-h
   <img class="pop" src="/pop.jpg" alt="Pop">
   <h1>Pop's Pool</h1>
   <div class="est">est. 2020 &middot; 2026 season</div>
+  <div id="stamp" class="stamp"></div>
 </header>
 
 <div id="teams" class="teams"></div>
@@ -96,7 +95,6 @@ footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-h
   <span style="width:22px"></span>
   <span style="flex:1">Entry</span>
   <span class="w-pick">Pick</span>
-  <span class="w-riv" title="Expected rivals left heading into the tiebreaker stage">Rivals</span>
   <span class="w-win">Win %</span>
 </div>
 <div id="board"></div>
@@ -104,13 +102,12 @@ footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-h
 
 <details>
   <summary>The rules</summary>
-  <p>Everyone predicts the regular-season record of their own alma mater &mdash; Georgia, Auburn, or Ole Miss. Closest to the real record wins. One entry per person.</p>
+  <p>Everyone picks one team &mdash; Georgia, Auburn, or Ole Miss &mdash; and predicts its regular-season record. Closest to the real record wins. One entry per person.</p>
   <p>When people tie on the record, three score predictions break it: Georgia&ndash;Auburn, Georgia&ndash;Ole Miss, and the Iron Bowl. If a tie somehow survives all three, the SEC champion pick settles it.</p>
   <div class="clar"><b>Commissioner's clarification:</b> tiebreakers are scored on the point spread differential. If Georgia beats Auburn by 14 and you predicted 13, you are off by one &mdash; not off by the total points. Your three margin errors are added together, and the smallest total wins.</div>
 </details>
 
 <footer>
-  <div id="stamp"></div>
   <div>Projections from 60,000 simulations. Odds and ratings via CollegeFootballData.</div>
 </footer>
 
@@ -119,70 +116,101 @@ footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-h
 <script>
 const $ = s => document.querySelector(s);
 const GK = ['a','o','i'];
-const RANGE = { a:[-15,45], o:[-25,35], i:[-20,35] };
+let HIST = [];
 
-function one(g, v){ return v > 0 ? g.ref + ' by ' + v : v < 0 ? g.opp + ' by ' + Math.abs(v) : 'a tie'; }
+const one = (g, v) => v > 0 ? g.ref + ' by ' + v : v < 0 ? g.opp + ' by ' + Math.abs(v) : 'a tie';
+const fmt = n => Number.isInteger(n) ? n : n.toFixed(1);
 
-function band(g, w){
-  const lo = w.lo, hi = w.hi;
-  if (lo === null) return one(g, Math.floor(hi)) + ' or less';
-  if (hi === null) return one(g, Math.ceil(lo)) + ' or more';
-  const a = Math.ceil(lo), b = Math.floor(hi), n = [];
-  for (let v = a; v <= b; v++) n.push(v);
-  if (!n.length) return one(g, Math.round((lo + hi) / 2));
-  if (n.length === 1) return one(g, n[0]);
-  if (n.every(v => v > 0)) return g.ref + ' by ' + n[0] + (n.length === 2 ? ' or ' : ' to ') + n[n.length-1];
-  if (n.every(v => v < 0)) return g.opp + ' by ' + Math.abs(n[n.length-1]) + (n.length === 2 ? ' or ' : ' to ') + Math.abs(n[0]);
-  return 'a tie either way';
-}
-
+/* ---------- lead line: record, then the game they have most leverage on ---------- */
 function lead(e, D){
   const rec = e.pick + '-' + (12 - e.pick);
   let best = null, bp = -1;
   GK.forEach(k => { const w = e['win_' + k]; if (!D.games[k].played && w.p > bp) { bp = w.p; best = k; } });
   const base = 'Get ' + e.team + ' to ' + rec;
-  if (best && bp >= 10) return base + ', then hope for ' + band(D.games[best], e['win_' + best]) + '.';
-  return base + ', then have the scores land close to your numbers.';
+  if (!best) return base + ' and the tiebreakers fall your way.';
+  const g = D.games[best], v = e.picks[best];
+  const beat = v === 0 ? g.ref + ' and ' + g.opp + ' to tie'
+    : (v > 0 ? g.ref + ' to beat ' + g.opp : g.opp + ' to beat ' + g.ref) + ' by ' + Math.abs(v);
+  return base + ', then root for ' + beat + ' and you are sitting pretty.';
+}
+
+/* ---------- the uniqueness explanation ---------- */
+function why(e){
+  const rec = e.pick + '-' + (12 - e.pick);
+  const share = e.sameRecord - 1;
+  const head = '<b>' + e.team + ' finishing ' + rec + '</b> happens about <b>' + e.recordProb + '%</b> of the time. ';
+  if (share === 0)
+    return head + 'You are the only entry on that number, so if it lands you walk into the tiebreakers against roughly <b>'
+      + e.rivals + '</b> contenders. A small field is worth more than a safe guess, and that is why your odds look good.';
+  if (share <= 2)
+    return head + 'Only ' + share + ' other ' + (share === 1 ? 'entry shares' : 'entries share')
+      + ' it, so if it lands you face roughly <b>' + e.rivals + '</b> contenders. Few people riding the same outcome is what makes an entry valuable.';
+  return head + 'That is one of the safest calls on the board &mdash; but <b>' + share
+    + ' other entries picked the exact same thing</b>, so if it lands you are one of roughly <b>' + e.rivals
+    + '</b> contenders, most of them with scores close to yours. Likely and unique are different things, and only unique wins. '
+    + 'A common pick means that even when you are right, somebody else is right alongside you.';
+}
+
+/* ---------- rank over time ---------- */
+function trend(name, D){
+  const pts = HIST.map(h => {
+    const r = (h.entries || []).find(x => x.n === name);
+    return r ? { wk: h.week, rank: r.r } : null;
+  }).filter(Boolean).sort((p, q) => p.wk - q.wk);
+  if (pts.length < 2)
+    return '<div class="sect">Rank by week</div><p class="tnote">The trend line appears once there are a couple of weeks of results to compare.</p>';
+
+  const W = 320, H = 100, PL = 26, PR = 8, PT = 10, PB = 18;
+  const lo = 1, hi = Math.max(19, D.entries.length, ...pts.map(p => p.rank));
+  const w0 = Math.min(...pts.map(p => p.wk)), w1 = Math.max(...pts.map(p => p.wk));
+  const X = w => PL + (w1 === w0 ? 0 : (w - w0) / (w1 - w0)) * (W - PL - PR);
+  const Y = r => PT + (r - lo) / (hi - lo) * (H - PT - PB);
+  const C = pts.map(p => [X(p.wk), Y(p.rank)]);
+
+  let d = 'M' + C[0][0].toFixed(1) + ',' + C[0][1].toFixed(1);
+  for (let i = 0; i < C.length - 1; i++) {
+    const p0 = C[i - 1] || C[i], p1 = C[i], p2 = C[i + 1], p3 = C[i + 2] || C[i + 1];
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += 'C' + c1x.toFixed(1) + ',' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ',' + c2y.toFixed(1)
+       + ' ' + p2[0].toFixed(1) + ',' + p2[1].toFixed(1);
+  }
+  let g = '';
+  [1, Math.round((1 + hi) / 2), hi].filter((v, i, s) => s.indexOf(v) === i).forEach(r => {
+    g += '<line x1="' + PL + '" y1="' + Y(r).toFixed(1) + '" x2="' + (W - PR) + '" y2="' + Y(r).toFixed(1)
+       + '" stroke="var(--line)" stroke-width="1"/>'
+       + '<text x="' + (PL - 6) + '" y="' + (Y(r) + 3.5).toFixed(1) + '" font-size="9" fill="var(--ink3)" text-anchor="end">' + r + '</text>';
+  });
+  let lab = '';
+  pts.forEach(p => { lab += '<text x="' + X(p.wk).toFixed(1) + '" y="' + (H - 4) + '" font-size="9" fill="var(--ink3)" text-anchor="middle">Wk ' + p.wk + '</text>'; });
+  const last = C[C.length - 1];
+  return '<div class="sect">Rank by week</div><div class="trend"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Rank by week for ' + name + '">'
+    + g + lab + '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="3.5" fill="var(--accent)"/></svg></div>'
+    + '<p class="tnote">Higher is better &mdash; rank 1 sits at the top.</p>';
+}
+
+/* ---------- one predicted game ---------- */
+function scoreRow(e, k, D){
+  const g = D.games[k], s = e.scores[k];
+  let h = '<div class="gl">' + g.label + '</div><div class="sb">'
+    + '<div class="sbt"><img src="' + g.refLogo + '" alt=""><span>' + g.ref + '</span></div>'
+    + '<div class="sbs">' + fmt(s[0]) + ' &ndash; ' + fmt(s[1]) + '</div>'
+    + '<div class="sbt r"><span>' + g.opp + '</span><img src="' + g.oppLogo + '" alt=""></div></div>';
+  if (g.played) h += '<div class="fin"><b>Final:</b> ' + g.score + ' &mdash; your margin was off by ' + Math.abs(e.picks[k] - g.actual) + '.</div>';
+  return h;
 }
 
 function panel(e, D){
   let h = '<div class="panel">';
   h += '<p class="lead">' + lead(e, D) + '</p>';
-  h += '<div class="chain">'
-     + '<div><div class="cn">' + e.alivePct + '%</div><div class="cl">still alive after<br>the record round</div></div>'
-     + '<div class="arw">&rarr;</div>'
-     + '<div><div class="cn">' + e.rivals + '</div><div class="cl">expected rivals left<br>heading into tiebreakers</div></div>'
-     + '<div class="arw">&rarr;</div>'
-     + '<div><div class="cn">' + e.winIfAlive + '%</div><div class="cl">you beat them<br>on the scores</div></div>'
-     + '</div>';
-  h += '<p class="note">' + e.alivePct + '% of ' + e.winIfAlive + '% is <b>' + e.winPct
-     + '%</b>. You cannot win without surviving the record round, so those two steps are the whole picture.</p>';
-  h += '<p class="note" style="padding-top:2px">The three games are added together &mdash; closest total wins. Being near on all three beats nailing one.</p>';
-
-  GK.forEach(k => {
-    const g = D.games[k], w = e['win_' + k], mine = e.picks[k];
-    const [lo, hi] = RANGE[k], sp = hi - lo, P = v => Math.min(100, Math.max(0, (v - lo) / sp * 100));
-    const a = w.lo === null ? lo : w.lo, b = w.hi === null ? hi : w.hi;
-    let ticks = '';
-    D.entries.forEach(x => { if (x.name !== e.name) ticks += '<div class="tick" style="left:' + P(x.picks[k]).toFixed(1) + '%"></div>'; });
-    h += '<div class="g"><div class="gh"><span class="gt">' + g.label + '</span>'
-       + '<span class="gy">you said ' + one(g, mine) + '</span></div>'
-       + '<div class="bar"><div class="rail"></div>' + ticks
-       + '<div class="zero" style="left:' + P(0).toFixed(1) + '%"></div>'
-       + (g.played ? '' : '<div class="band" style="left:' + P(a).toFixed(1) + '%;width:' + Math.max(2, P(b) - P(a)).toFixed(1) + '%"></div>')
-       + '<div class="dot" style="left:' + P(mine).toFixed(1) + '%"></div>'
-       + (g.played ? '<div class="act" style="left:' + P(g.actual).toFixed(1) + '%"></div>' : '')
-       + '</div>'
-       + '<div class="ax"><span>' + g.opp + ' +' + Math.abs(lo) + '</span><span>tie</span><span>' + g.ref + ' +' + hi + '</span></div>';
-    if (g.played) {
-      h += '<div class="done"><b>Final:</b> ' + g.score + '. You were off by ' + Math.abs(mine - g.actual) + '.</div>';
-    } else {
-      h += '<p class="gr"><b>' + band(g, w) + '</b> and you win this game outright. ' + w.p + '% of the time.</p>';
-    }
-    h += '</div>';
-  });
-  h += '<p class="key">Dot is you. Small ticks are the other entries. Faint middle tick is a tie.'
-     + (Object.values(D.games).some(g => g.played) ? ' Green line is the actual result.' : '') + '</p>';
+  h += '<p class="why">' + why(e) + '</p>';
+  h += '<div class="sect">Score predictions</div>';
+  GK.forEach(k => { h += scoreRow(e, k, D); });
+  h += '<div class="sect">SEC champion</div><div class="champ">'
+     + (e.secLogo ? '<img src="' + e.secLogo + '" alt="">' : '')
+     + '<span class="cn2">' + e.sec + '</span><span class="cx">final tiebreaker</span></div>';
+  h += trend(e.name, D);
   return h + '</div>';
 }
 
@@ -192,7 +220,7 @@ function render(D){
     return '<div class="tcard"><img src="' + t.logo + '" alt="' + t.name + '">'
       + '<div class="tname">' + t.name + '</div>'
       + '<div class="trec">' + t.record.w + '-' + t.record.l + '</div>'
-      + '<div class="tproj">likely ' + top.wins + '-' + (12 - top.wins) + '</div></div>';
+      + '<div class="tproj">expected ' + top.wins + '-' + (12 - top.wins) + '</div></div>';
   }).join('');
 
   $('#board').innerHTML = D.entries.map((e, i) =>
@@ -201,7 +229,6 @@ function render(D){
     + '<img class="logo" src="' + e.teamLogo + '" alt="' + e.team + '">'
     + '<span class="nm">' + e.name + '</span>'
     + '<span class="pk w-pick">' + e.pick + '-' + (12 - e.pick) + '</span>'
-    + '<span class="rv w-riv">' + e.rivals + '</span>'
     + '<span class="wp w-win">' + e.winPct.toFixed(1) + '</span>'
     + '</button><div id="p' + i + '"></div>').join('');
 
@@ -209,8 +236,9 @@ function render(D){
     $('#pending').textContent = 'Still to enter: ' + D.pending.map(p => p.name).join(', ');
 
   const d = new Date(D.generated);
-  $('#stamp').textContent = 'Updated ' + d.toLocaleString('en-US',
-    { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZone:'America/New_York' }) + ' ET';
+  $('#stamp').innerHTML = 'Updated ' + d.toLocaleString('en-US',
+    { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZone:'America/New_York' })
+    + ' ET<br><span class="cad">Refreshes Saturdays at 5pm, 8pm and 1am ET</span>';
 
   document.querySelectorAll('.row').forEach(b => b.addEventListener('click', () => {
     const i = b.dataset.i, box = document.getElementById('p' + i), open = box.innerHTML !== '';
@@ -223,9 +251,11 @@ function render(D){
   }));
 }
 
-fetch('/data/standings.json?t=' + Date.now())
-  .then(r => r.json()).then(render)
-  .catch(() => { $('#board').innerHTML = '<p style="text-align:center;color:var(--ink3);padding:20px">Standings are being updated. Check back shortly.</p>'; });
+Promise.all([
+  fetch('/data/standings.json?t=' + Date.now()).then(r => r.json()),
+  fetch('/data/history.json?t=' + Date.now()).then(r => r.json()).catch(() => [])
+]).then(([D, H]) => { HIST = Array.isArray(H) ? H : []; render(D); })
+ .catch(() => { $('#board').innerHTML = '<p style="text-align:center;color:var(--ink3);padding:20px">Standings are being updated. Check back shortly.</p>'; });
 </script>
 </body>
 </html>

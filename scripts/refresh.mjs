@@ -95,7 +95,7 @@ const secW = secT.map(t => Math.exp(RT[t] / 6));
 const secS = secW.reduce((a, b) => a + b, 0);
 
 // ---------------------------------------------------------------- simulate
-const S = {}; E.forEach(e => S[e.name] = { win: 0, alive: 0, winAlive: 0, rivals: 0 });
+const S = {}; E.forEach(e => S[e.name] = { win: 0, alive: 0, winAlive: 0, rivals: 0, exact: 0 });
 const recDist = { Georgia: {}, Auburn: {}, 'Ole Miss': {} };
 const M = { a: [], o: [], i: [] };
 
@@ -110,6 +110,7 @@ for (let s = 0; s < SIMS; s++) {
     }
   }
   for (const t of POOL) recDist[t][rec[t]] = (recDist[t][rec[t]] || 0) + 1;
+  E.forEach(e => { if (rec[e.team] === e.wins) S[e.name].exact++; });
   const mA = marginOf(res[gA.id], gA, 'Georgia');
   const mO = marginOf(res[gO.id], gO, 'Georgia');
   const mI = marginOf(res[gI.id], gI, 'Alabama');
@@ -170,6 +171,10 @@ const rows = E.map(e => {
     rivals: +(a.rivals / Math.max(1, a.alive)).toFixed(1),
     winIfAlive: +(100 * a.winAlive / Math.max(1, a.alive)).toFixed(1),
     picks: { a: e.ugaAub, o: e.ugaOle, i: e.ironBowl },
+    scores: { a: e.sAub, o: e.sOle, i: e.sIron },
+    recordProb: Math.round(100 * a.exact / SIMS),
+    sameTeam: E.filter(z => z.team === e.team).length,
+    sameRecord: E.filter(z => z.team === e.team && z.wins === e.wins).length,
     win_a: W.a[e.name], win_o: W.o[e.name], win_i: W.i[e.name]
   };
 }).sort((x, y) => y.winPct - x.winPct);
@@ -198,6 +203,7 @@ const payload = {
       .sort((p, q) => p.wins - q.wins)
   })),
   pending: src.pending || [],
+  entryCount: E.length + (src.pending || []).length,
   entries: rows
 };
 
@@ -205,13 +211,15 @@ fs.mkdirSync(SNAP, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'standings.json'), JSON.stringify(payload));
 
 const stamp = new Date().toISOString().slice(0, 10);
+const SEASON_START = new Date('2026-08-24T00:00:00Z');   // Monday of week 1
+const weekNo = Math.max(1, Math.floor((Date.now() - SEASON_START) / 6048e5) + 1);
 fs.writeFileSync(path.join(SNAP, `${stamp}.json`),
-  JSON.stringify({ date: stamp, entries: rows.map(r => ({ n: r.name, w: r.winPct, r: r.rank })) }));
+  JSON.stringify({ date: stamp, week: weekNo, entries: rows.map(r => ({ n: r.name, w: r.winPct, r: r.rank })) }));
 
 const hp = path.join(OUT, 'history.json');
 const hist = fs.existsSync(hp) ? JSON.parse(fs.readFileSync(hp, 'utf8')) : [];
-const idx = hist.findIndex(h => h.date === stamp);
-const entry = { date: stamp, entries: rows.map(r => ({ n: r.name, w: r.winPct, r: r.rank })) };
+const idx = hist.findIndex(h => h.week === weekNo);
+const entry = { date: stamp, week: weekNo, entries: rows.map(r => ({ n: r.name, w: r.winPct, r: r.rank })) };
 if (idx >= 0) hist[idx] = entry; else hist.push(entry);
 fs.writeFileSync(hp, JSON.stringify(hist));
 

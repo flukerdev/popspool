@@ -2,7 +2,8 @@
  "_notes": {
   "marginConvention": "ugaAub = UGA points minus Auburn points. ugaOle = UGA points minus Ole Miss points. ironBowl = Alabama points minus Auburn points. Signed, so picking the wrong winner produces a large error automatically.",
   "rule": "Tiebreaker = sum of |predicted margin - actual margin| across the three games. Lowest total wins. SEC champion breaks any remaining tie.",
-  "scores": "sAub/sOle/sIron are [refTeamPoints, oppPoints] exactly as submitted, display only. Ref team is Georgia, Georgia, Alabama. The margins above are what scoring uses."
+  "scores": "sAub/sOle/sIron are [refTeamPoints, oppPoints] exactly as submitted, display only. Ref team is Georgia, Georgia, Alabama. The margins above are what scoring uses.",
+  "teams": "Georgia, Auburn and Ole Miss play 12 regular-season games and are simulated game by game. Huntingdon (D3, USA South) plays 10 and has no SP+ or lines, so its remaining games use a fixed per-game win probability drawn from Beta(5,3) \u2014 mean .625, expected final 6-4."
  },
  "entries": [
   {
@@ -334,24 +335,95 @@
     24,
     20
    ]
-  }
- ],
- "pending": [
+  },
+  {
+   "name": "Jim Fluker",
+   "team": "Auburn",
+   "wins": 6,
+   "ugaAub": 20,
+   "ugaOle": 3,
+   "ironBowl": -3,
+   "sec": "Georgia",
+   "sAub": [
+    34,
+    14
+   ],
+   "sOle": [
+    34,
+    31
+   ],
+   "sIron": [
+    24,
+    27
+   ],
+   "submitted": "2026-09-11"
+  },
+  {
+   "name": "Funcle",
+   "team": "Huntingdon",
+   "wins": 6,
+   "ugaAub": 18,
+   "ugaOle": 3,
+   "ironBowl": 6,
+   "sec": "Georgia",
+   "sAub": [
+    31,
+    13
+   ],
+   "sOle": [
+    27,
+    24
+   ],
+   "sIron": [
+    27,
+    21
+   ],
+   "submitted": "2026-09-11"
+  },
   {
    "name": "Lucy",
-   "note": "entry not yet submitted"
+   "team": "Ole Miss",
+   "wins": 10,
+   "ugaAub": 11,
+   "ugaOle": 4,
+   "ironBowl": 14,
+   "sec": "Georgia",
+   "sAub": [
+    33,
+    22
+   ],
+   "sOle": [
+    32,
+    28
+   ],
+   "sIron": [
+    39,
+    25
+   ],
+   "submitted": "2026-09-12"
   },
   {
-   "name": "Jim",
-   "note": "entry not yet submitted"
-  },
-  {
-   "name": "Luke",
-   "note": "entry not yet submitted"
-  },
-  {
-   "name": "Cile",
-   "note": "entry not yet submitted"
+   "name": "Cile Branch",
+   "team": "Georgia",
+   "wins": 10,
+   "ugaAub": 21,
+   "ugaOle": 20,
+   "ironBowl": -7,
+   "sec": "Georgia",
+   "sAub": [
+    35,
+    14
+   ],
+   "sOle": [
+    42,
+    22
+   ],
+   "sIron": [
+    7,
+    14
+   ],
+   "submitted": "2026-09-12"
   }
- ]
+ ],
+ "pending": []
 }

@@ -9,6 +9,10 @@ if (!KEY) { console.error('Missing CFBD_KEY'); process.exit(1); }
 const API   = 'https://api.collegefootballdata.com';
 const YEAR  = 2026;
 const POOL  = ['Georgia', 'Auburn', 'Ole Miss'];
+// Teams with no SP+ rating and no betting lines (D3). Remaining games use a fixed
+// per-game win probability drawn from Beta(a,b); played games count as actual results.
+const OFFGRID = { 'Huntingdon': { a: 5, b: 3, games: 10 } };
+const ALLTEAMS = [...POOL, ...Object.keys(OFFGRID)];
 const SIMS  = 60000;
 
 // model constants
@@ -29,7 +33,7 @@ async function cfbd(p, q) {
 }
 
 // ---------------------------------------------------------------- load
-const teams = await cfbd('/teams/fbs', { year: YEAR });
+const teams = await cfbd('/teams', { year: YEAR });   // all divisions — D3 included
 const LOGO = {}, COLOR = {};
 for (const t of teams) {
   LOGO[t.school] = (t.logos || [])[0] || null;
@@ -45,6 +49,22 @@ for (const t of POOL) {
 }
 const games = Object.values(gmap);
 
+// off-grid teams: banked record + count of remaining games
+const OFF = {};
+for (const [team, cfg] of Object.entries(OFFGRID)) {
+  const gs = await cfbd('/games', { year: YEAR, team, seasonType: 'regular' });
+  let w = 0, l = 0;
+  for (const g of gs) {
+    if (!g.completed || g.homePoints == null) continue;
+    const home = g.homeTeam === team;
+    const me = home ? g.homePoints : g.awayPoints;
+    const them = home ? g.awayPoints : g.homePoints;
+    if (me > them) w++; else l++;
+  }
+  OFF[team] = { ...cfg, w, l, remaining: gs.length - w - l, scheduled: gs.length };
+  console.log(`${team}: ${w}-${l}, ${OFF[team].remaining} remaining of ${gs.length}`);
+}
+
 // ---------------------------------------------------------------- rng
 let seed = 20260911;
 function rand() {
@@ -54,6 +74,10 @@ function rand() {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 const gauss = () => Math.sqrt(-2 * Math.log(Math.max(rand(), 1e-12))) * Math.cos(2 * Math.PI * rand());
+// Gamma with integer shape = sum of exponentials; Beta from two Gammas.
+const gammaInt = k => { let s = 0; for (let i = 0; i < k; i++) s -= Math.log(Math.max(rand(), 1e-12)); return s; };
+const beta = (a, b) => { const x = gammaInt(a); return x / (x + gammaInt(b)); };
+const binom = (n, p) => { let c = 0; for (let i = 0; i < n; i++) if (rand() < p) c++; return c; };
 
 function expect(g) {
   const rec = lmap[g.id];
@@ -96,11 +120,13 @@ const secS = secW.reduce((a, b) => a + b, 0);
 
 // ---------------------------------------------------------------- simulate
 const S = {}; E.forEach(e => S[e.name] = { win: 0, alive: 0, winAlive: 0, rivals: 0, exact: 0 });
-const recDist = { Georgia: {}, Auburn: {}, 'Ole Miss': {} };
+const recDist = {}; ALLTEAMS.forEach(t => recDist[t] = {});
 const M = { a: [], o: [], i: [] };
 
 for (let s = 0; s < SIMS; s++) {
-  const rec = { Georgia: 0, Auburn: 0, 'Ole Miss': 0 }, res = {};
+  const rec = {}; ALLTEAMS.forEach(t => rec[t] = 0);
+  const res = {};
+  for (const [t, o] of Object.entries(OFF)) rec[t] = o.w + binom(o.remaining, beta(o.a, o.b));
   for (const g of games) {
     const r = (g.completed && g.homePoints != null) ? { h: g.homePoints, a: g.awayPoints } : simGame(EX[g.id]);
     res[g.id] = r;
@@ -109,7 +135,7 @@ for (let s = 0; s < SIMS; s++) {
       if (g.awayTeam === t && r.a > r.h) rec[t]++;
     }
   }
-  for (const t of POOL) recDist[t][rec[t]] = (recDist[t][rec[t]] || 0) + 1;
+  for (const t of ALLTEAMS) recDist[t][rec[t]] = (recDist[t][rec[t]] || 0) + 1;
   E.forEach(e => { if (rec[e.team] === e.wins) S[e.name].exact++; });
   const mA = marginOf(res[gA.id], gA, 'Georgia');
   const mO = marginOf(res[gO.id], gO, 'Georgia');
@@ -166,6 +192,7 @@ const rows = E.map(e => {
   return {
     name: e.name, team: e.team, teamLogo: LOGO[e.team] || null, teamColor: COLOR[e.team] || '#555',
     pick: e.wins, sec: e.sec, secLogo: LOGO[e.sec] || null,
+    games: OFFGRID[e.team] ? OFFGRID[e.team].games : 12,
     winPct: +(100 * a.win / SIMS).toFixed(1),
     alivePct: Math.round(100 * a.alive / SIMS),
     rivals: +(a.rivals / Math.max(1, a.alive)).toFixed(1),
@@ -192,9 +219,11 @@ const payload = {
     o: { ...gameMeta(gO, 'Georgia', 'Ole Miss', 'Georgia at Ole Miss'), proj: +mean(M.o).toFixed(1) },
     i: { ...gameMeta(gI, 'Alabama', 'Auburn', 'Iron Bowl'), proj: +mean(M.i).toFixed(1) }
   },
-  teams: POOL.map(t => ({
+  teams: ALLTEAMS.map(t => ({
     name: t, logo: LOGO[t], color: COLOR[t], rating: RT[t] ?? null,
-    record: (() => {
+    games: OFFGRID[t] ? OFFGRID[t].games : 12,
+    offGrid: !!OFFGRID[t],
+    record: OFF[t] ? { w: OFF[t].w, l: OFF[t].l } : (() => {
       const gs = games.filter(g => (g.homeTeam === t || g.awayTeam === t) && g.completed && g.homePoints != null);
       const w = gs.filter(g => (g.homeTeam === t ? g.homePoints > g.awayPoints : g.awayPoints > g.homePoints)).length;
       return { w, l: gs.length - w };

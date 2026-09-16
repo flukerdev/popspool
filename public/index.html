@@ -32,12 +32,12 @@ h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;
 .stamp{font-size:12px;color:var(--ink3);margin-top:10px;line-height:1.55}
 .cad{color:var(--ink3);opacity:.85}
 .rule{height:1px;background:var(--line);margin:20px 0}
-.teams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px}
-.tcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 8px;text-align:center}
+.teams{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:22px}
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 5px;text-align:center}
 .tcard img{width:30px;height:30px;object-fit:contain}
-.tname{font-size:11px;color:var(--ink3);margin-top:5px}
+.tname{font-size:10.5px;color:var(--ink3);margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .trec{font-family:var(--serif);font-size:19px;margin-top:1px}
-.tproj{font-size:11px;color:var(--ink3)}
+.tproj{font-size:10.5px;color:var(--ink3)}
 .thead{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--ink3);padding:0 10px 7px;text-transform:uppercase;letter-spacing:.05em}
 .w-rank{width:20px}.w-pick{width:44px;text-align:right}.w-win{width:52px;text-align:right}
 .row{display:flex;align-items:center;gap:9px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 10px;margin-bottom:5px;cursor:pointer;font:inherit;color:inherit;text-align:left}
@@ -123,7 +123,7 @@ const fmt = n => Number.isInteger(n) ? n : n.toFixed(1);
 
 /* ---------- lead line: record, then the game they have most leverage on ---------- */
 function lead(e, D){
-  const rec = e.pick + '-' + (12 - e.pick);
+  const rec = e.pick + '-' + (e.games - e.pick);
   let best = null, bp = -1;
   GK.forEach(k => { const w = e['win_' + k]; if (!D.games[k].played && w.p > bp) { bp = w.p; best = k; } });
   const base = 'Get ' + e.team + ' to ' + rec;
@@ -136,7 +136,7 @@ function lead(e, D){
 
 /* ---------- the uniqueness explanation ---------- */
 function why(e){
-  const rec = e.pick + '-' + (12 - e.pick);
+  const rec = e.pick + '-' + (e.games - e.pick);
   const share = e.sameRecord - 1;
   const head = '<b>' + e.team + ' finishing ' + rec + '</b> happens about <b>' + e.recordProb + '%</b> of the time. ';
   if (share === 0)
@@ -220,7 +220,7 @@ function render(D){
     return '<div class="tcard"><img src="' + t.logo + '" alt="' + t.name + '">'
       + '<div class="tname">' + t.name + '</div>'
       + '<div class="trec">' + t.record.w + '-' + t.record.l + '</div>'
-      + '<div class="tproj">expected ' + top.wins + '-' + (12 - top.wins) + '</div></div>';
+      + '<div class="tproj">expected ' + top.wins + '-' + (t.games - top.wins) + '</div></div>';
   }).join('');
 
   $('#board').innerHTML = D.entries.map((e, i) =>
@@ -228,7 +228,7 @@ function render(D){
     + '<span class="rk w-rank">' + e.rank + '</span>'
     + '<img class="logo" src="' + e.teamLogo + '" alt="' + e.team + '">'
     + '<span class="nm">' + e.name + '</span>'
-    + '<span class="pk w-pick">' + e.pick + '-' + (12 - e.pick) + '</span>'
+    + '<span class="pk w-pick">' + e.pick + '-' + (e.games - e.pick) + '</span>'
     + '<span class="wp w-win">' + e.winPct.toFixed(1) + '</span>'
     + '</button><div id="p' + i + '"></div>').join('');
 

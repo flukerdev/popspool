@@ -236,9 +236,9 @@ function render(D){
     $('#pending').textContent = 'Still to enter: ' + D.pending.map(p => p.name).join(', ');
 
   const d = new Date(D.generated);
-  $('#stamp').innerHTML = 'Updated ' + d.toLocaleString('en-US',
+  $('#stamp').textContent = 'Updated ' + d.toLocaleString('en-US',
     { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZone:'America/New_York' })
-    + ' ET<br><span class="cad">Refreshes Saturdays at 5pm, 8pm and 1am ET</span>';
+    + ' ET';
 
   document.querySelectorAll('.row').forEach(b => b.addEventListener('click', () => {
     const i = b.dataset.i, box = document.getElementById('p' + i), open = box.innerHTML !== '';

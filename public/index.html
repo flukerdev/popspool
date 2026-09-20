@@ -122,7 +122,13 @@ const GK = ['a','o','i'];
 let HIST = [];
 
 const one = (g, v) => v > 0 ? g.ref + ' by ' + v : v < 0 ? g.opp + ' by ' + Math.abs(v) : 'a tie';
-const fmt = n => Number.isInteger(n) ? n : n.toFixed(1);
+/* Some entries were submitted with fractional scores. Show whole numbers, but keep
+   the margin exact, since the margin is what the tiebreaker is actually scored on:
+   round the total half-up, then split it around the entry's stated margin. */
+const whole = (sc, margin) => {
+  const t = sc[0] + sc[1];
+  return [Math.max(0, Math.round((t + margin) / 2)), Math.max(0, Math.round((t - margin) / 2))];
+};
 
 /* ---------- biggest movers: top 3 climbers and top 3 fallers, week over week ---------- */
 let MOVERS = {};
@@ -247,10 +253,10 @@ function trend(name, D){
 
 /* ---------- one predicted game ---------- */
 function scoreRow(e, k, D){
-  const g = D.games[k], s = e.scores[k];
+  const g = D.games[k], s = whole(e.scores[k], e.picks[k]);
   let h = '<div class="gl">' + g.label + '</div><div class="sb">'
     + '<div class="sbt"><img src="' + g.refLogo + '" alt=""><span>' + g.ref + '</span></div>'
-    + '<div class="sbs">' + fmt(s[0]) + ' &ndash; ' + fmt(s[1]) + '</div>'
+    + '<div class="sbs">' + s[0] + ' &ndash; ' + s[1] + '</div>'
     + '<div class="sbt r"><span>' + g.opp + '</span><img src="' + g.oppLogo + '" alt=""></div></div>';
   if (g.played) h += '<div class="fin"><b>Final:</b> ' + g.score + ' &mdash; your margin was off by ' + Math.abs(e.picks[k] - g.actual) + '.</div>';
   return h;

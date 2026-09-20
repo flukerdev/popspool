@@ -46,6 +46,9 @@ h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;
 .rk{font-family:var(--serif);font-size:17px;color:var(--ink3)}
 .logo{width:22px;height:22px;object-fit:contain;flex:none}
 .nm{flex:1;min-width:0;font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mv{flex:none;font-size:11px;font-weight:600;padding:1.5px 5px;border-radius:5px;line-height:1.25;letter-spacing:.01em}
+.mv.up{color:#1c6b3c;background:#e3efe6}
+.mv.dn{color:#8f2323;background:#f6e5e3}
 .pk{font-size:13px;color:var(--ink2)}
 .rv{font-size:13px;color:var(--ink2)}
 .wp{font-size:16px;font-weight:600}
@@ -67,7 +70,7 @@ h1{font-family:var(--serif);font-size:42px;font-weight:400;letter-spacing:-.5px;
 .champ .cn2{font-size:13.5px;flex:1}
 .champ .cx{font-size:11px;color:var(--ink3)}
 .trend{padding:4px 0 2px}
-.trend svg{width:100%;height:112px;display:block;overflow:visible}
+.trend svg{width:100%;height:140px;display:block;overflow:visible}
 .tnote{font-size:11.5px;color:var(--ink3);line-height:1.5;padding:2px 2px 0}
 details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-top:26px}
 summary{font-family:var(--serif);font-size:19px;cursor:pointer}
@@ -121,6 +124,37 @@ let HIST = [];
 const one = (g, v) => v > 0 ? g.ref + ' by ' + v : v < 0 ? g.opp + ' by ' + Math.abs(v) : 'a tie';
 const fmt = n => Number.isInteger(n) ? n : n.toFixed(1);
 
+/* ---------- biggest movers: top 3 climbers and top 3 fallers, week over week ---------- */
+let MOVERS = {};
+function computeMovers(){
+  MOVERS = {};
+  const H = [...HIST].sort((a, b) => a.week - b.week);
+  if (H.length < 2) return;
+  const cur = H[H.length - 1], prev = H[H.length - 2];
+  const pm = new Map((prev.entries || []).map(e => [e.n, e.r]));
+  const d = (cur.entries || []).map(e => {
+    const was = pm.get(e.n);
+    return was == null ? null : { n: e.n, d: was - e.r };   // positive = climbed
+  }).filter(x => x && Math.abs(x.d) >= 2);   // a one-spot nudge is not a mover
+
+  const pick = (arr, cmp) => {
+    const s = arr.sort(cmp);
+    if (!s.length) return [];
+    const cut = Math.abs(s[Math.min(2, s.length - 1)].d);
+    return s.filter(x => Math.abs(x.d) >= cut);           // keep ties at the cutoff
+  };
+  pick(d.filter(x => x.d > 0), (a, b) => b.d - a.d).forEach(x => { MOVERS[x.n] = x.d; });
+  pick(d.filter(x => x.d < 0), (a, b) => a.d - b.d).forEach(x => { MOVERS[x.n] = x.d; });
+}
+
+function moverBadge(name){
+  const m = MOVERS[name];
+  if (!m) return '';
+  const up = m > 0, n = Math.abs(m);
+  return '<span class="mv ' + (up ? 'up' : 'dn') + '" title="' + (up ? 'Up ' : 'Down ') + n
+       + ' spot' + (n === 1 ? '' : 's') + ' since last week">' + (up ? '\u25B2' : '\u25BC') + n + '</span>';
+}
+
 /* ---------- lead line: record, then the game they have most leverage on ---------- */
 function lead(e, D){
   const rec = e.pick + '-' + (e.games - e.pick);
@@ -160,34 +194,55 @@ function trend(name, D){
   if (pts.length < 2)
     return '<div class="sect">Rank by week</div><p class="tnote">The trend line appears once there are a couple of weeks of results to compare.</p>';
 
-  const W = 320, H = 100, PL = 26, PR = 8, PT = 10, PB = 18;
-  const lo = 1, hi = Math.max(19, D.entries.length, ...pts.map(p => p.rank));
-  const w0 = Math.min(...pts.map(p => p.wk)), w1 = Math.max(...pts.map(p => p.wk));
+  const W = 320, H = 140, PL = 26, PR = 18, PT = 30, PB = 26;
+  const field = Math.max(D.entries.length, ...pts.map(p => p.rank));
+  const rmin = Math.min(...pts.map(p => p.rank)), rmax = Math.max(...pts.map(p => p.rank));
+  let lo = Math.max(1, rmin - 1), hi = Math.min(field, rmax + 1);
+  if (hi - lo < 4) { hi = Math.min(field, lo + 4); lo = Math.max(1, hi - 4); }
+  const w0 = pts[0].wk, w1 = pts[pts.length - 1].wk;
   const X = w => PL + (w1 === w0 ? 0 : (w - w0) / (w1 - w0)) * (W - PL - PR);
   const Y = r => PT + (r - lo) / (hi - lo) * (H - PT - PB);
-  const C = pts.map(p => [X(p.wk), Y(p.rank)]);
+  const UP = '#1c6b3c', DN = '#8f2323';
 
-  let d = 'M' + C[0][0].toFixed(1) + ',' + C[0][1].toFixed(1);
-  for (let i = 0; i < C.length - 1; i++) {
-    const p0 = C[i - 1] || C[i], p1 = C[i], p2 = C[i + 1], p3 = C[i + 2] || C[i + 1];
-    const c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
-    d += 'C' + c1x.toFixed(1) + ',' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ',' + c2y.toFixed(1)
-       + ' ' + p2[0].toFixed(1) + ',' + p2[1].toFixed(1);
-  }
-  let g = '';
-  [1, Math.round((1 + hi) / 2), hi].filter((v, i, s) => s.indexOf(v) === i).forEach(r => {
-    g += '<line x1="' + PL + '" y1="' + Y(r).toFixed(1) + '" x2="' + (W - PR) + '" y2="' + Y(r).toFixed(1)
-       + '" stroke="var(--line)" stroke-width="1"/>'
-       + '<text x="' + (PL - 6) + '" y="' + (Y(r) + 3.5).toFixed(1) + '" font-size="9" fill="var(--ink3)" text-anchor="end">' + r + '</text>';
+  let grid = '', seg = '', dots = '', lab = '';
+
+  [lo, Math.round((lo + hi) / 2), hi].filter((v, i, a) => a.indexOf(v) === i).forEach(r => {
+    grid += '<line x1="' + PL + '" y1="' + Y(r).toFixed(1) + '" x2="' + (W - PR) + '" y2="' + Y(r).toFixed(1)
+          + '" stroke="var(--line)" stroke-width="1"/>'
+          + '<text x="' + (PL - 6) + '" y="' + (Y(r) + 3.5).toFixed(1) + '" font-size="9" fill="var(--ink3)" text-anchor="end">' + r + '</text>';
   });
-  let lab = '';
-  pts.forEach(p => { lab += '<text x="' + X(p.wk).toFixed(1) + '" y="' + (H - 4) + '" font-size="9" fill="var(--ink3)" text-anchor="middle">Wk ' + p.wk + '</text>'; });
-  const last = C[C.length - 1];
-  return '<div class="sect">Rank by week</div><div class="trend"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Rank by week for ' + name + '">'
-    + g + lab + '<path d="' + d + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
-    + '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="3.5" fill="var(--accent)"/></svg></div>'
-    + '<p class="tnote">Higher is better &mdash; rank 1 sits at the top.</p>';
+
+  pts.forEach((p, i) => {
+    const x = X(p.wk), y = Y(p.rank);
+    grid += '<line x1="' + x.toFixed(1) + '" y1="' + PT + '" x2="' + x.toFixed(1) + '" y2="' + (H - PB)
+          + '" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 3"/>';
+    lab += '<text x="' + x.toFixed(1) + '" y="' + (H - 8) + '" font-size="9.5" fill="var(--ink3)" text-anchor="middle">Wk ' + p.wk + '</text>';
+
+    if (i) {
+      const q = pts[i - 1], d = q.rank - p.rank;
+      const col = d > 0 ? UP : d < 0 ? DN : 'var(--ink3)';
+      seg += '<line x1="' + X(q.wk).toFixed(1) + '" y1="' + Y(q.rank).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1)
+           + '" stroke="' + col + '" stroke-width="2.5" stroke-linecap="round"/>';
+      const txt = d > 0 ? '▲ ' + d : d < 0 ? '▼ ' + Math.abs(d) : 'even';
+      seg += '<text x="' + ((X(q.wk) + x) / 2).toFixed(1) + '" y="13" font-size="10.5" font-weight="600" fill="' + col
+           + '" text-anchor="middle">' + txt + '</text>';
+    }
+
+    const lastOne = i === pts.length - 1;
+    dots += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (lastOne ? 5 : 3.8)
+          + '" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>'
+          + '<text x="' + x.toFixed(1) + '" y="' + (y - 10).toFixed(1) + '" font-size="9.5" font-weight="600" fill="var(--ink2)" text-anchor="middle">#' + p.rank + '</text>';
+  });
+
+  const net = pts[0].rank - pts[pts.length - 1].rank;
+  const summary = net > 0 ? 'Up ' + net + ' spot' + (net === 1 ? '' : 's') + ' since week ' + pts[0].wk + '.'
+    : net < 0 ? 'Down ' + Math.abs(net) + ' spot' + (net === -1 ? '' : 's') + ' since week ' + pts[0].wk + '.'
+    : 'Same spot as week ' + pts[0].wk + '.';
+
+  return '<div class="sect">Rank by week</div><div class="trend"><svg viewBox="0 0 ' + W + ' ' + H
+    + '" role="img" aria-label="Rank by week for ' + name + '">'
+    + grid + lab + seg + dots + '</svg></div>'
+    + '<p class="tnote">Rank 1 sits at the top. Green means you climbed that week, red means you slipped. ' + summary + '</p>';
 }
 
 /* ---------- one predicted game ---------- */
@@ -228,6 +283,7 @@ function render(D){
     + '<span class="rk w-rank">' + e.rank + '</span>'
     + '<img class="logo" src="' + e.teamLogo + '" alt="' + e.team + '">'
     + '<span class="nm">' + e.name + '</span>'
+    + moverBadge(e.name)
     + '<span class="pk w-pick">' + e.pick + '-' + (e.games - e.pick) + '</span>'
     + '<span class="wp w-win">' + e.winPct.toFixed(1) + '</span>'
     + '</button><div id="p' + i + '"></div>').join('');
@@ -254,7 +310,7 @@ function render(D){
 Promise.all([
   fetch('/data/standings.json?t=' + Date.now()).then(r => r.json()),
   fetch('/data/history.json?t=' + Date.now()).then(r => r.json()).catch(() => [])
-]).then(([D, H]) => { HIST = Array.isArray(H) ? H : []; render(D); })
+]).then(([D, H]) => { HIST = Array.isArray(H) ? H : []; computeMovers(); render(D); })
  .catch(() => { $('#board').innerHTML = '<p style="text-align:center;color:var(--ink3);padding:20px">Standings are being updated. Check back shortly.</p>'; });
 </script>
 </body>

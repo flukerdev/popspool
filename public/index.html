@@ -77,6 +77,11 @@ summary{font-family:var(--serif);font-size:19px;cursor:pointer}
 details p{margin-top:11px;font-size:14px;line-height:1.65}
 .clar{background:var(--accentbg);border-radius:6px;padding:10px 12px;margin-top:12px;font-size:13.5px;line-height:1.55}
 footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-height:1.7}
+.path{background:var(--paper);border:1px solid var(--line);border-left:3px solid #1c6b3c;border-radius:8px;padding:9px 11px;margin-bottom:6px;font-size:13.5px;line-height:1.5}
+.path.tie{border-left-color:var(--line2)}
+.pn{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
+.nochance{background:var(--accentbg);border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.55}
+.w-off{width:48px;text-align:right}.of{font-size:13px;color:var(--ink2)}
 .pend{font-size:12.5px;color:var(--ink3);text-align:center;margin-top:12px;font-style:italic;font-family:var(--serif)}
 @media(max-width:420px){h1{font-size:34px}.nm{font-size:13.5px}}
 </style>
@@ -98,6 +103,7 @@ footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-h
   <span style="width:22px"></span>
   <span style="flex:1">Entry</span>
   <span class="w-pick">Pick</span>
+  <span class="w-off">Off by</span>
   <span class="w-win">Win %</span>
 </div>
 <div id="board"></div>
@@ -108,6 +114,7 @@ footer{text-align:center;color:var(--ink3);font-size:12px;margin-top:26px;line-h
   <p>Everyone picks one team &mdash; Georgia, Auburn, or Ole Miss &mdash; and predicts its regular-season record. Closest to the real record wins. One entry per person.</p>
   <p>When people tie on the record, three score predictions break it: Georgia&ndash;Auburn, Georgia&ndash;Ole Miss, and the Iron Bowl. If a tie somehow survives all three, the SEC champion pick settles it.</p>
   <div class="clar"><b>Commissioner's clarification:</b> tiebreakers are scored on the point spread differential. If Georgia beats Auburn by 14 and you predicted 13, you are off by one &mdash; not off by the total points. Your three margin errors are added together, and the smallest total wins.</div>
+  <p><b>Off by</b> on the board is each entry's total margin error on the tiebreaker games played so far.</p>
 </details>
 
 <footer>
@@ -262,10 +269,159 @@ function scoreRow(e, k, D){
   return h;
 }
 
+/* ---------- final stretch: exact paths to first place ---------- */
+/* Runs only when at most one tiebreaker game is left. Enumerates every way the
+   remaining games can go and scores every entry under Pop's rules. */
+const MMIN = -45, MMAX = 50;
+let FW = null;
+const doneTotal = (e, D) => GK.filter(k => D.games[k].played).reduce((s, k) => s + Math.abs(e.picks[k] - D.games[k].actual), 0);
+
+function finalWeek(D){
+  const open = GK.filter(k => !D.games[k].played);
+  if (open.length > 1) return null;
+  const k = open[0] || null, g = k ? D.games[k] : null;
+  const T = {};
+  D.teams.forEach(t => { T[t.name] = { w: t.record.w, games: t.games, rem: Math.max(0, t.games - t.record.w - t.record.l) }; });
+  const free = {};
+  Object.keys(T).forEach(n => { free[n] = T[n].rem - (g && (n === g.ref || n === g.opp) ? 1 : 0); });
+  const vars = Object.keys(T).filter(n => free[n] > 0);
+  let combos = [{}];
+  vars.forEach(n => { const nx = []; combos.forEach(c => { for (let x = 0; x <= free[n]; x++) nx.push({ ...c, [n]: x }); }); combos = nx; });
+  const ms = []; if (g) { for (let m = MMIN; m <= MMAX; m++) if (m) ms.push(m); } else ms.push(null);
+  const base = {}; D.entries.forEach(e => base[e.name] = doneTotal(e, D));
+  const R = [];
+  ms.forEach(m => combos.forEach(c => {
+    const fin = {};
+    Object.keys(T).forEach(n => { fin[n] = T[n].w + (c[n] || 0)
+      + (g && m > 0 && n === g.ref ? 1 : 0) + (g && m < 0 && n === g.opp ? 1 : 0); });
+    const sc = D.entries.map(e => ({ e, d1: Math.abs(e.pick - fin[e.team]), d2: base[e.name] + (g ? Math.abs(e.picks[k] - m) : 0) }));
+    const m1 = Math.min(...sc.map(s => s.d1)), alive = sc.filter(s => s.d1 === m1);
+    const b = Math.min(...alive.map(s => s.d2)), top = alive.filter(s => s.d2 === b);
+    R.push({ m, c, fin, alive: alive.map(s => s.e.name), win: top.map(s => s.e.name),
+             sameSec: new Set(top.map(s => s.e.sec)).size === 1 });
+  }));
+  return { k, g, T, free, vars, R, base };
+}
+
+function teamPhrase(n, x, F){
+  const t = F.T[n], f = F.free[n], w = t.w + x;
+  const rec = ' (' + w + '-' + (t.games - w) + ')';
+  if (f === 1) return n + (x ? ' wins' : ' loses') + ' its last game' + rec;
+  return n + ' finishes ' + w + '-' + (t.games - w);
+}
+function marginPhrase(lo, hi, g){
+  const R = g.ref, O = g.opp;
+  if (lo === MMIN && hi === MMAX) return null;
+  const pos = (a, b) => a === 1 && b === MMAX ? R + ' beats ' + O
+    : b === MMAX ? R + ' beats ' + O + ' by ' + a + ' or more'
+    : a === b ? R + ' beats ' + O + ' by exactly ' + a
+    : a === 1 ? R + ' beats ' + O + ' by ' + b + ' or less'
+    : R + ' beats ' + O + ' by ' + a + ' to ' + b;
+  const neg = (a, b) => a === 1 && b === -MMIN ? O + ' beats ' + R
+    : b === -MMIN ? O + ' beats ' + R + ' by ' + a + ' or more'
+    : a === b ? O + ' beats ' + R + ' by exactly ' + a
+    : a === 1 ? O + ' beats ' + R + ' by ' + b + ' or less'
+    : O + ' beats ' + R + ' by ' + a + ' to ' + b;
+  if (lo > 0) return pos(lo, hi);
+  if (hi < 0) return neg(-hi, -lo);
+  return neg(1, -lo) + ', or ' + pos(1, hi);
+}
+const listNames = a => a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+
+function pathsFor(name, D){
+  const F = FW; if (!F) return null;
+  const mine = F.R.filter(r => r.win.includes(name));
+  if (!mine.length) return [];
+  const sig = r => JSON.stringify(r.c) + '#' + (r.win.length > 1 ? r.win.filter(n => n !== name).sort().join(',') + (r.sameSec ? '' : '~sec') : '');
+  const byM = new Map();
+  mine.forEach(r => { const s = byM.get(r.m) || []; s.push(sig(r)); byM.set(r.m, s); });
+  const ms = [...byM.keys()].sort((a, b) => a - b);
+  const groups = [];
+  ms.forEach(m => {
+    const s = byM.get(m).sort().join('|'), last = groups[groups.length - 1];
+    if (last && last.s === s && last.hi === m - 1 || last && last.s === s && last.hi === -1 && m === 1) last.hi = m;
+    else groups.push({ s, lo: m, hi: m });
+  });
+  const out = [];
+  groups.forEach(gr => {
+    let items = gr.s.split('|').map(x => { const [c, t] = x.split('#'); return { c: JSON.parse(c), t }; });
+    F.vars.forEach(n => {
+      const key = it => { const o = { ...it.c }; delete o[n]; return JSON.stringify(o) + '#' + it.t; };
+      const seen = new Map(); items.forEach(it => { const kk = key(it); seen.set(kk, (seen.get(kk) || 0) + 1); });
+      if ([...seen.values()].every(v => v === F.free[n] + 1)) {
+        const u = new Map(); items.forEach(it => { const o = { ...it.c }; delete o[n]; u.set(key(it), { c: o, t: it.t }); });
+        items = [...u.values()];
+      }
+    });
+    items.forEach(it => {
+      const parts = Object.keys(it.c).map(n => teamPhrase(n, it.c[n], F));
+      const mp = F.g ? marginPhrase(gr.lo, gr.hi, F.g) : null;
+      if (mp) parts.push(mp);
+      let txt = parts.length ? parts.join(', and ') : 'Any result';
+      let note = '';
+      if (it.t) {
+        const sec = it.t.endsWith('~sec'), co = it.t.replace('~sec', '').split(',');
+        note = sec ? 'tied with ' + listNames(co) + ', settled by the SEC champion pick'
+                   : 'tied with ' + listNames(co) + ' all the way down, so the prize is split';
+      }
+      out.push({ txt, note, tie: !!it.t });
+    });
+  });
+  return out.sort((a, b) => a.tie - b.tie);
+}
+
+function noChance(e, D){
+  const F = FW, t = F.T[e.team], max = t.w + t.rem, l = t.games;
+  if (e.pick < t.w) return e.team + ' already has ' + t.w + ' wins. You picked ' + e.pick + '-' + (l - e.pick) + '.';
+  if (e.pick > max) return e.team + ' can finish no better than ' + max + '-' + (l - max) + '. You picked ' + e.pick + '-' + (l - e.pick) + '.';
+  const beat = new Set(); F.R.filter(r => r.alive.includes(e.name)).forEach(r => r.win.forEach(n => beat.add(n)));
+  return 'Your record can still land, but in every one of those finishes ' + listNames([...beat])
+    + (beat.size === 1 ? ' has' : ' have') + ' a lower tiebreaker total than you, whatever the score.';
+}
+
+function whyRank(e, D){
+  const F = FW, k = F.k, mine = F.base[e.name];
+  const played = GK.filter(x => D.games[x].played);
+  let h = '<b>Tiebreaker so far:</b> off by ' + played.map(x => Math.abs(e.picks[x] - D.games[x].actual)).join(' + ')
+        + ' = <b>' + mine + '</b>';
+  if (k) h += ', with ' + D.games[k].label + ' still to play (you picked ' + one(D.games[k], e.picks[k]) + ').';
+  else h += '.';
+  const grp = D.entries.filter(z => z.team === e.team && z.pick === e.pick)
+    .map(z => ({ n: z.name, t: F.base[z.name] })).sort((a, b) => a.t - b.t);
+  const rec = e.team + ' ' + e.pick + '-' + (e.games - e.pick);
+  const tied = D.entries.filter(z => z.rank === e.rank).length;
+  const rk = (tied > 1 ? 'tied for #' : '#') + e.rank;
+  if (e.winPct === 0 && !pathsFor(e.name, D).length)
+    return h + '<br><br><b>Why ' + rk + ':</b> no path to first, so your win % is 0. Everyone with no path shares this spot.';
+  let s = '<br><br><b>Why ' + rk + ':</b> you win in ' + e.winPct.toFixed(1) + '% of 60,000 simulated finishes. '
+        + rec + ' lands about ' + e.recordProb + '% of the time. ';
+  if (grp.length > 1) {
+    const pos = grp.findIndex(z => z.n === e.name) + 1;
+    s += 'Of the ' + grp.length + ' entries on ' + rec + ', your ' + mine + ' is '
+      + (pos === 1 ? 'the lowest' : ordinal(pos) + ' lowest') + ': '
+      + grp.map(z => (z.n === e.name ? '<b>' + z.n + ' ' + z.t + '</b>' : z.n + ' ' + z.t)).join(', ') + '.';
+  } else s += 'You are the only entry on ' + rec + ', so when it lands you only have to beat whoever else’s record lands too.';
+  return h + s;
+}
+const ordinal = n => n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th';
+
+function pathsBlock(e, D){
+  const p = pathsFor(e.name, D);
+  let h = '<div class="sect">What has to happen</div>';
+  if (!p.length) return h + '<div class="nochance"><b>No chance.</b> ' + noChance(e, D) + '</div>';
+  return h + p.map(x => '<div class="path' + (x.tie ? ' tie' : '') + '">' + x.txt + '.'
+    + (x.note ? '<span class="pn">' + x.note + '</span>' : '') + '</div>').join('');
+}
+
 function panel(e, D){
   let h = '<div class="panel">';
-  h += '<p class="lead">' + lead(e, D) + '</p>';
-  h += '<p class="why">' + why(e) + '</p>';
+  if (FW) {
+    h += pathsBlock(e, D);
+    h += '<p class="why" style="border-bottom:1px solid var(--line)">' + whyRank(e, D) + '</p>';
+  } else {
+    h += '<p class="lead">' + lead(e, D) + '</p>';
+    h += '<p class="why">' + why(e) + '</p>';
+  }
   h += '<div class="sect">Score predictions</div>';
   GK.forEach(k => { h += scoreRow(e, k, D); });
   h += '<div class="sect">SEC champion</div><div class="champ">'
@@ -276,6 +432,7 @@ function panel(e, D){
 }
 
 function render(D){
+  FW = finalWeek(D);
   $('#teams').innerHTML = D.teams.map(t => {
     const top = [...t.dist].sort((a, b) => b.p - a.p)[0];
     return '<div class="tcard"><img src="' + t.logo + '" alt="' + t.name + '">'
@@ -291,6 +448,7 @@ function render(D){
     + '<span class="nm">' + e.name + '</span>'
     + moverBadge(e.name)
     + '<span class="pk w-pick">' + e.pick + '-' + (e.games - e.pick) + '</span>'
+    + '<span class="of w-off">' + doneTotal(e, D) + '</span>'
     + '<span class="wp w-win">' + e.winPct.toFixed(1) + '</span>'
     + '</button><div id="p' + i + '"></div>').join('');
 
